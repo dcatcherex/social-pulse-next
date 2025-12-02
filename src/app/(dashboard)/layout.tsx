@@ -13,7 +13,8 @@ import {
   TrendingUp,
   Sparkles,
   Building2,
-  FolderOpen
+  FolderOpen,
+  Link2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { BrandSwitcher } from '@/features/brand-management';
@@ -27,6 +28,7 @@ const navItems = [
   { path: '/content', label: 'Content AI', icon: PenTool },
   { path: '/library', label: 'Content Library', icon: FolderOpen },
   { path: '/schedule', label: 'Schedule', icon: Calendar },
+  { path: '/social-accounts', label: 'Social Accounts', icon: Link2 },
   { path: '/competitors', label: 'Competitors', icon: ChartColumn },
   { path: '/brand', label: 'Brand Profile', icon: Building2 },
   { path: '/settings', label: 'Settings', icon: Settings },

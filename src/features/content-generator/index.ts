@@ -6,6 +6,12 @@ export type { ContentTab } from './components/TabSwitcher';
 export { ErrorAlert } from './components/ErrorAlert';
 export { TextGeneratorTab } from './components/TextGeneratorTab';
 export { ImageStudioTab } from './components/ImageStudioTab';
+export { TemplatesTab } from './components/TemplatesTab';
+export { TemplateSelector } from './components/TemplateSelector';
+export { TemplateForm } from './components/TemplateForm';
+
+// Templates
+export * from './templates';
 
 // Hooks
 export { useContentGeneration } from './hooks/use-content-generation';

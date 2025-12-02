@@ -76,10 +76,19 @@ a budget-friendly social listening app tailored for small businesses:
 **9. Intelligent Scheduling** ✅
 
 - 🟡 Best time to post recommendations (timezone shown, algorithm pending)
-- ❌ Auto-schedule content to optimal times
+- ✅ Schedule content via Late API
 - ✅ Content calendar with drag-and-drop
 - ❌ Bulk scheduling capabilities
 - ✅ Queue management for multiple clients
+
+**9.1 Social Account Integration (Late API)** ✅
+
+- ✅ OAuth connection for 10 platforms (Facebook, Instagram, Twitter/X, TikTok, LinkedIn, YouTube, Threads, Pinterest, Reddit, Bluesky)
+- ✅ Profile management (organize accounts by brand/client)
+- ✅ Real posting: Publish immediately or schedule
+- ✅ Account status monitoring (active, token expiry)
+- ✅ PublishDialog for selecting accounts and scheduling
+- ✅ Server-side API routes to protect Late API key
 
 **10. Campaign Management** ✅
 
@@ -155,44 +164,77 @@ a budget-friendly social listening app tailored for small businesses:
 
 **19. Response Management**
 
-- ❌ Inbox for all social mentions and comments
-- ❌ AI-suggested responses based on sentiment
-- ❌ Template library for common responses
-- ❌ Escalation workflows for crisis situations
-- ❌ Response time tracking
+- Inbox for all social mentions and comments
+- AI-suggested responses based on sentiment
+- Template library for common responses
+- Escalation workflows for crisis situations
+- Response time tracking
 
 **20. Community Insights**
 
-- ❌ Identify brand advocates and loyal followers
-- ❌ Track user-generated content
-- ❌ Monitor customer pain points and feature requests
-- ❌ Community sentiment health score
+- Identify brand advocates and loyal followers
+- Track user-generated content
+- Monitor customer pain points and feature requests
+- Community sentiment health score
+
+## Monetization & Subscription
+
+**21. Subscription & Pricing System** 
+
+- 4-tier pricing model (Free, Starter, Pro, Agency)
+- Plan-based feature limits (profiles, accounts, posts, AI generations)
+- Usage tracking hooks and components
+- Feature gates for premium features
+- Upgrade prompts and usage dashboards
+- Stripe payment integration (prepared, not connected)
+
+**Plan Limits:**
+
+| Feature | Free | Starter ($19) | Pro ($49) | Agency ($149) |
+|---------|------|---------------|-----------|---------------|
+| Profiles | 1 | 3 | 10 | Unlimited |
+| Social Accounts | 3 | 10 | 25 | Unlimited |
+| Posts/month | 30 | 100 | 500 | Unlimited |
+| AI Generations/day | 10 | 50 | Unlimited | Unlimited |
+| Content Library | 50 | 200 | 1000 | Unlimited |
+| Team Members | 1 | 3 | 10 | Unlimited |
+| Analytics History | 7 days | 30 days | 90 days | 1 year |
+| Schedule Ahead | 7 days | 30 days | 90 days | Unlimited |
+| Bulk Scheduling | | | | |
+| Advanced Analytics | | | | |
+| Custom Reports | | | | |
+| White Label | | | | |
+| API Access | | | | |
+| Priority Support | | | | |
 
 ## MVP Priority Ranking
 
 For a tight budget, I'd suggest building in phases:
 
-**Phase 1 (MVP):** ✅ COMPLETE
+**Phase 1 (MVP):** COMPLETE
 
-- ✅ Multi-brand dashboard
-- ✅ Basic keyword/hashtag monitoring (simulated)
-- ✅ Sentiment analysis
-- ✅ AI content ideation with industry personalization
-- ✅ Basic scheduling with calendar
-- ✅ Authentication + Onboarding wizard
-- ✅ React Router navigation
-- ✅ Editable preferences in Settings
+- Multi-brand dashboard
+- Basic keyword/hashtag monitoring (simulated)
+- Sentiment analysis
+- AI content ideation with industry personalization
+- Basic scheduling with calendar
+- Authentication + Onboarding wizard
+- React Router navigation
+- Editable preferences in Settings
+- Social Account Integration (Late API) - Real OAuth & posting
+- Subscription & Pricing System - 4-tier model with limits
 
-**Phase 2:** 🟡 IN PROGRESS
+**Phase 2:** 
 
-- 🟡 Competitor tracking (mocked charts)
-- ✅ AI content generation
-- ❌ Advanced analytics and reporting
-- ❌ Influencer finder
+- Competitor tracking (mocked charts)
+- AI content generation
+- Stripe payment integration
+- Advanced analytics and reporting
+- Influencer finder
 
-**Phase 3:** ❌ NOT STARTED
+**Phase 3:** IN PROGRESS 
 
-- ❌ Real-time monitoring (real APIs)
-- ❌ Response management
-- ❌ Predictive analytics
-- ❌ Advanced integrations
+- Real-time monitoring (real APIs)
+- Response management
+- Predictive analytics
+- Social Media Publishing Integration (Late API)

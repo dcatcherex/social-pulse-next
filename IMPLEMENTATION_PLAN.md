@@ -16,9 +16,11 @@ src/
 │   ├── brand-management/        # ✅ Full brand identity (voice, audience, colors, values)
 │   ├── content-generator/       # ✅ AI content generation + industry prompts
 │   ├── content-library/         # ✅ Save, edit, manage generated content (Draft→Ready→Scheduled)
+│   ├── social-accounts/         # ✅ Late API integration for real social posting
 │   ├── social-monitoring/       # ✅ Mention feed & keyword tracking
 │   ├── scheduling/              # ✅ Calendar & queue
 │   ├── campaigns/               # ✅ Campaign management
+│   ├── subscription/            # ✅ Pricing tiers, usage limits, feature gates
 │   ├── analytics/               # ✅ Types defined
 │   └── competitors/             # ✅ Types defined
 ├── shared/                      # Generic reusable components
@@ -105,7 +107,7 @@ See `ARCHITECTURE.md` for full documentation.
 | Landing Page | ✅ | `LandingPage.tsx` - Value proposition, feature showcase, signup CTA | Add explainer video |
 | Signup Flow | ✅ | `SignupPage.tsx` + `LoginPage.tsx` - Email/password auth with session persistence | - |
 | Onboarding Wizard | ✅ | `OnboardingWizard.tsx` - 8-step wizard: Brand → Industry → Challenges → Keywords → Platforms (opt) → Competitors (opt) → Goals (opt) → Best Time (opt) | - |
-| Social Account OAuth | ❌ | None | Need Meta, TikTok, YouTube OAuth flows |
+| Social Account OAuth | ✅ | Late API integration | Real OAuth via Late (FB, IG, TikTok, LinkedIn, etc.) |
 | Initial Data Collection | ✅ | Data saved to localStorage, editable in Settings, used for personalization | - |
 
 ### Phase 2: Dashboard Experience
@@ -429,28 +431,47 @@ Files to Create:
     └── useFirstVisit.ts      # Track first visits per page
 ```
 
-#### 3.3 Social Account Integration (Real APIs)
+#### 3.3 Social Account Integration (Late API) ✅ COMPLETED
 ```
-Priority: HIGH (for production)
-Effort: 1-2 weeks
+Status: DONE
+Completed: Dec 2024
 
-Files to Create:
-├── services/
-│   ├── platforms/
-│   │   ├── metaService.ts    # Facebook/Instagram Graph API
-│   │   ├── tiktokService.ts  # TikTok API
-│   │   └── youtubeService.ts # YouTube Data API
-│   └── oauthService.ts       # OAuth flow handler
-├── views/
-│   └── ConnectAccounts.tsx
-└── hooks/
-    └── useSocialAccounts.ts
+Files Created:
+├── features/social-accounts/
+│   ├── types.ts                  # ✅ Platform types, API request/response types
+│   ├── services/
+│   │   └── late-service.ts       # ✅ Late API client functions
+│   ├── hooks/
+│   │   └── use-social-accounts.ts # ✅ React Query hooks for profiles, accounts, posts
+│   ├── context/
+│   │   └── SocialAccountsContext.tsx # ✅ Global state for social accounts
+│   ├── components/
+│   │   ├── SocialAccountsPage.tsx  # ✅ Main page for managing accounts
+│   │   ├── AccountCard.tsx         # ✅ Connected account display
+│   │   ├── PlatformConnectButton.tsx # ✅ Platform connection grid
+│   │   └── PublishDialog.tsx       # ✅ Publish/schedule content dialog
+│   └── index.ts                  # ✅ Feature exports
+├── app/api/late/
+│   ├── profiles/route.ts        # ✅ GET/POST profiles
+│   ├── accounts/route.ts        # ✅ GET/DELETE connected accounts
+│   ├── connect/route.ts         # ✅ OAuth flow initiation
+│   └── posts/route.ts           # ✅ GET/POST/PUT/DELETE posts
+├── app/(dashboard)/social-accounts/
+│   └── page.tsx                  # ✅ Route page
 
-Implementation Notes:
-- Meta: Use Facebook Graph API + Instagram Basic Display
-- TikTok: Official API or web scraping fallback
-- YouTube: Data API v3
-- Implement rate limiting + caching (Feature #14)
+Implementation:
+✅ Late API integration (https://getlate.dev)
+✅ OAuth connection for 10 platforms (FB, IG, Twitter, TikTok, LinkedIn, YouTube, Threads, Pinterest, Reddit, Bluesky)
+✅ Profile management (create, select, delete)
+✅ Account connection/disconnection via OAuth
+✅ Real posting: Publish Now or Schedule
+✅ React Query for data fetching with caching
+✅ SocialAccountsContext for global state
+✅ PublishDialog for content publishing
+✅ Navigation added to sidebar
+
+Environment:
+- LATE_API_KEY in .env.local
 ```
 
 ---
@@ -611,11 +632,44 @@ social-pulse/
 ---
 
 *Document generated based on analysis of `features.md`, `user_flow.md`, and current codebase state.*
-*Last updated: December 1, 2024*
+*Last updated: December 2, 2024*
 
 ---
 
 ## Changelog
+
+### Dec 2, 2024
+- ✅ AI Image Provider System: Complete implementation
+  - **Provider Strategy Pattern** for flexible multi-provider image generation
+  - Supports: Google Gemini, Kie.ai (nano-banana, Flux, GPT-4o), OpenAI (future)
+  - Location: `src/lib/ai-providers/`
+  - Components: types.ts, base-provider.ts, config.ts, index.ts, providers/
+  - Dynamic model selection in Image Studio based on configured providers
+  - Models grouped by provider in dropdown with descriptions
+  - Automatic fallback if primary provider fails
+  - Enhanced prompt building with style, camera angle, aspect ratio hints
+  - Environment config: `IMAGE_PROVIDER`, `KIE_AI_API_KEY`, `GEMINI_API_KEY`
+  - Default: Kie.ai `google/nano-banana` (Gemini 3) when available
+
+- ✅ Subscription & Pricing System: Complete implementation
+  - 4-tier pricing model (Free, Starter $19, Pro $49, Agency $149)
+  - Plan limits configuration (profiles, accounts, posts, AI generations, etc.)
+  - Usage tracking system for billing
+  - `useSubscription` hook for checking limits and features
+  - UI components: UpgradePrompt, UsageBar, UsageDashboard, FeatureGate, LimitGate
+  - Feature gates for premium features (advanced analytics, custom reports, etc.)
+  - Prepared for Stripe integration
+
+- ✅ Social Accounts Integration (Late API): Complete implementation
+  - Late API integration for real social media posting
+  - OAuth connection for 10 platforms (Facebook, Instagram, Twitter, TikTok, LinkedIn, YouTube, Threads, Pinterest, Reddit, Bluesky)
+  - Profile management for organizing accounts
+  - Real posting: Publish immediately or schedule for later
+  - API routes to protect Late API key server-side
+  - React Query hooks for data fetching
+  - SocialAccountsContext for global state management
+  - UI components: SocialAccountsPage, AccountCard, PlatformConnectButton, PublishDialog
+  - Navigation added to dashboard sidebar
 
 ### Dec 1, 2024
 - ✅ Content Library: Complete implementation

@@ -25,7 +25,6 @@ import {
   ASPECT_RATIOS,
   CAMERA_ANGLES,
   IMAGE_STYLES,
-  AI_MODELS,
 } from '../hooks/use-image-generation';
 
 export function ImageStudioTab() {
@@ -42,6 +41,7 @@ export function ImageStudioTab() {
     setImageCount,
     aiModel,
     setAiModel,
+    availableModels,
     productImage,
     presenterImage,
     handleImageUpload,
@@ -55,6 +55,9 @@ export function ImageStudioTab() {
     reset: resetImageError,
   } = useImageGeneration();
 
+  // Get current model info for display
+  const currentModelInfo = availableModels.find(m => m.value === aiModel);
+
   return (
     <div className="animate-in slide-in-from-bottom-2 fade-in duration-300">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -66,16 +69,36 @@ export function ImageStudioTab() {
             {/* AI Model */}
             <div>
               <Label className="text-xs font-bold text-slate-500 uppercase mb-2">AI Model</Label>
-              <Select value={aiModel} onValueChange={setAiModel}>
+              <Select value={aiModel} onValueChange={setAiModel} disabled={availableModels.length === 0}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder={availableModels.length === 0 ? 'No providers configured' : 'Select model'}>
+                    {currentModelInfo && (
+                      <span>{currentModelInfo.label} <span className="text-slate-400">({currentModelInfo.description})</span></span>
+                    )}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {AI_MODELS.map((model) => (
-                    <SelectItem key={model.value} value={model.value}>
-                      {model.label} ({model.description})
-                    </SelectItem>
+                  {/* Group by provider */}
+                  {Array.from(new Set(availableModels.map(m => m.providerLabel))).map(providerLabel => (
+                    <div key={providerLabel}>
+                      <div className="px-2 py-1.5 text-xs font-semibold text-slate-500 bg-slate-50">
+                        {providerLabel}
+                      </div>
+                      {availableModels
+                        .filter(m => m.providerLabel === providerLabel)
+                        .map((model) => (
+                          <SelectItem key={model.value} value={model.value}>
+                            {model.label} <span className="text-slate-400">({model.description})</span>
+                          </SelectItem>
+                        ))}
+                    </div>
                   ))}
+                  {availableModels.length === 0 && (
+                    <div className="px-2 py-4 text-center text-sm text-slate-500">
+                      No providers configured.<br />
+                      <span className="text-xs">Set GEMINI_API_KEY or KIE_AI_API_KEY</span>
+                    </div>
+                  )}
                 </SelectContent>
               </Select>
             </div>

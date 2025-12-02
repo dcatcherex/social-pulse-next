@@ -7,13 +7,14 @@ import {
   ErrorAlert,
   TextGeneratorTab,
   ImageStudioTab,
+  TemplatesTab,
   useContentGeneration,
 } from '@/features/content-generator';
 import type { ContentTab } from '@/features/content-generator';
 import { useBrand } from '@/features/brand-management';
 
 export default function ContentPage() {
-  const [activeTab, setActiveTab] = useState<ContentTab>('text');
+  const [activeTab, setActiveTab] = useState<ContentTab>('templates');
   const { activeProfile } = useBrand();
   const { error: contentError, reset: resetContentError } = useContentGeneration();
 
@@ -32,6 +33,9 @@ export default function ContentPage() {
           onDismiss={resetContentError}
         />
       )}
+
+      {/* Templates Tab */}
+      {activeTab === 'templates' && <TemplatesTab />}
 
       {/* Text Generator Tab */}
       {activeTab === 'text' && <TextGeneratorTab />}

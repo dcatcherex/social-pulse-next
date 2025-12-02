@@ -47,3 +47,28 @@ export async function generateImage(
   
   return data;
 }
+
+/**
+ * Image provider info returned from API
+ */
+export interface ImageProviderInfo {
+  type: string;
+  name: string;
+  configured: boolean;
+  models: string[];
+}
+
+/**
+ * Get available image providers and their configuration status
+ */
+export async function getImageProviders(): Promise<{ providers: ImageProviderInfo[] }> {
+  const response = await fetch('/api/content/image', {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    return { providers: [] };
+  }
+
+  return response.json();
+}

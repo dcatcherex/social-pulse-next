@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { generateImage } from '../services/content-service';
+import { useState, useCallback, useMemo } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { generateImage, getImageProviders } from '../services/content-service';
 
 // Presets
 export const ASPECT_RATIOS = [
@@ -36,10 +36,64 @@ export const IMAGE_STYLES = [
   { value: 'neon', label: 'Neon/Cyberpunk', description: 'Futuristic glow' },
 ] as const;
 
-export const AI_MODELS = [
-  { value: 'gemini-2.0-flash-preview-image-generation', label: 'Gemini 2.0 Flash', description: 'Fast, good quality' },
-  { value: 'imagen-3.0-generate-002', label: 'Imagen 3', description: 'High quality images' },
-] as const;
+// Model definitions with provider grouping
+export interface AIModel {
+  value: string;
+  label: string;
+  description: string;
+  provider: string;
+  providerLabel: string;
+  configured: boolean;
+}
+
+// Static model definitions (will be filtered by configured providers)
+const ALL_MODELS: AIModel[] = [
+  // Gemini Models
+  { 
+    value: 'gemini-2.0-flash-preview-image-generation', 
+    label: 'Gemini 2.0 Flash', 
+    description: 'Fast, good quality',
+    provider: 'gemini',
+    providerLabel: 'Google Gemini',
+    configured: false,
+  },
+  // Kie.ai Models
+  { 
+    value: 'google/nano-banana', 
+    label: 'Nano Banana (Gemini 3)', 
+    description: 'Latest Gemini via Kie.ai',
+    provider: 'kie-ai',
+    providerLabel: 'Kie.ai',
+    configured: false,
+  },
+  { 
+    value: 'flux-kontext-pro', 
+    label: 'Flux Kontext Pro', 
+    description: 'Balanced quality',
+    provider: 'kie-ai',
+    providerLabel: 'Kie.ai',
+    configured: false,
+  },
+  { 
+    value: 'flux-kontext-max', 
+    label: 'Flux Kontext Max', 
+    description: 'Highest quality',
+    provider: 'kie-ai',
+    providerLabel: 'Kie.ai',
+    configured: false,
+  },
+  { 
+    value: 'gpt4o-image', 
+    label: 'GPT-4o Image', 
+    description: 'OpenAI via Kie.ai',
+    provider: 'kie-ai',
+    providerLabel: 'Kie.ai',
+    configured: false,
+  },
+];
+
+// Legacy export for backward compatibility
+export const AI_MODELS = ALL_MODELS;
 
 export function useImageGeneration() {
   const [prompt, setPrompt] = useState('');
@@ -47,9 +101,43 @@ export function useImageGeneration() {
   const [cameraAngle, setCameraAngle] = useState('eye-level');
   const [imageStyle, setImageStyle] = useState('photorealistic');
   const [imageCount, setImageCount] = useState(1);
-  const [aiModel, setAiModel] = useState('gemini-2.0-flash-preview-image-generation');
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [productImage, setProductImage] = useState<string | null>(null);
   const [presenterImage, setPresenterImage] = useState<string | null>(null);
+
+  // Fetch available providers from the API
+  const { data: providersData } = useQuery({
+    queryKey: ['image-providers'],
+    queryFn: getImageProviders,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Compute available models based on configured providers
+  const availableModels = useMemo(() => {
+    return ALL_MODELS.map(model => ({
+      ...model,
+      configured: providersData?.providers?.some(
+        (p) => p.type === model.provider && p.configured
+      ) ?? false,
+    })).filter(model => model.configured);
+  }, [providersData]);
+
+  // Get current model - user selection or default
+  const aiModel = useMemo(() => {
+    // If user has selected a model, use it
+    if (selectedModel && availableModels.some(m => m.value === selectedModel)) {
+      return selectedModel;
+    }
+    // Default: Prefer Kie.ai nano-banana, fallback to first available
+    if (availableModels.length === 0) return '';
+    const preferred = availableModels.find(m => m.value === 'google/nano-banana');
+    return preferred?.value || availableModels[0].value;
+  }, [selectedModel, availableModels]);
+
+  // Handle model change
+  const setAiModel = useCallback((value: string) => {
+    setSelectedModel(value);
+  }, []);
 
   const mutation = useMutation({
     mutationFn: () => generateImage({ 
@@ -58,7 +146,7 @@ export function useImageGeneration() {
       cameraAngle, 
       imageStyle, 
       imageCount, 
-      model: aiModel,
+      model: aiModel || undefined,
       productImage: productImage || undefined,
       presenterImage: presenterImage || undefined,
     }),
@@ -121,6 +209,7 @@ export function useImageGeneration() {
     // AI Model
     aiModel,
     setAiModel,
+    availableModels,
     // Product & Presenter Images
     productImage,
     presenterImage,

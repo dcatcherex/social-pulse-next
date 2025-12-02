@@ -8,6 +8,7 @@ import { BrandProvider } from "@/features/brand-management";
 import { SchedulerProvider } from "@/features/scheduling";
 import { CampaignProvider } from "@/features/campaigns";
 import { ContentLibraryProvider } from "@/features/content-library";
+import { SocialAccountsProvider } from "@/features/social-accounts";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,7 +35,9 @@ export default function RootLayout({
                 <SchedulerProvider>
                   <CampaignProvider>
                     <ContentLibraryProvider>
-                      {children}
+                      <SocialAccountsProvider>
+                        {children}
+                      </SocialAccountsProvider>
                     </ContentLibraryProvider>
                   </CampaignProvider>
                 </SchedulerProvider>

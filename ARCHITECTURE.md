@@ -102,6 +102,21 @@ social-pulse/
 │   │   │   ├── types.ts
 │   │   │   └── index.ts
 │   │   │
+│   │   ├── social-accounts/         # Social Media Accounts (Late API)
+│   │   │   ├── components/
+│   │   │   │   ├── SocialAccountsPage.tsx
+│   │   │   │   ├── AccountCard.tsx
+│   │   │   │   ├── PlatformConnectButton.tsx
+│   │   │   │   └── PublishDialog.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── use-social-accounts.ts
+│   │   │   ├── services/
+│   │   │   │   └── late-service.ts
+│   │   │   ├── context/
+│   │   │   │   └── SocialAccountsContext.tsx
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
+│   │   │
 │   │   └── brand-management/        # Multi-brand feature
 │   │       ├── components/
 │   │       │   ├── BrandSwitcher.tsx

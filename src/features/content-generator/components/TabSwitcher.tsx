@@ -1,8 +1,8 @@
 'use client';
 
-import { Type, Image as ImageIcon } from 'lucide-react';
+import { Type, Image as ImageIcon, LayoutTemplate } from 'lucide-react';
 
-export type ContentTab = 'text' | 'image';
+export type ContentTab = 'templates' | 'text' | 'image';
 
 interface TabSwitcherProps {
   activeTab: ContentTab;
@@ -14,26 +14,37 @@ export function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
     <div className="flex justify-center mb-8">
       <div className="flex bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm">
         <button
+          onClick={() => onTabChange('templates')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${
+            activeTab === 'templates' 
+              ? 'bg-indigo-600 text-white shadow-md' 
+              : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-50'
+          }`}
+        >
+          <LayoutTemplate className="w-4 h-4" />
+          <span className="hidden sm:inline">Templates</span>
+        </button>
+        <button
           onClick={() => onTabChange('text')}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${
             activeTab === 'text' 
               ? 'bg-indigo-600 text-white shadow-md' 
               : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-50'
           }`}
         >
           <Type className="w-4 h-4" />
-          Text Generator
+          <span className="hidden sm:inline">Custom Text</span>
         </button>
         <button
           onClick={() => onTabChange('image')}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${
             activeTab === 'image' 
               ? 'bg-indigo-600 text-white shadow-md' 
               : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-50'
           }`}
         >
           <ImageIcon className="w-4 h-4" />
-          Image Studio
+          <span className="hidden sm:inline">Image Studio</span>
         </button>
       </div>
     </div>

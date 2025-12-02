@@ -29,7 +29,7 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
-      <div className="h-2 bg-gradient-to-r from-indigo-500 to-purple-500" />
+      <div className="h-2 bg-linear-to-r from-indigo-500 to-purple-500" />
       <div className="p-6 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-4">
           <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded uppercase">
