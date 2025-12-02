@@ -26,30 +26,38 @@ export interface QuickTemplate {
   audience: string;
 }
 
+// Shared brand context type
+export interface BrandContext {
+  name: string;
+  industry: string;
+  tagline?: string;
+  uniqueSellingPoint?: string;
+  brandVoice?: {
+    tone: string;
+    personality?: string[];
+    avoidWords?: string[];
+  };
+  targetAudience?: {
+    ageRange: string;
+    demographics?: string;
+    interests?: string[];
+    painPoints?: string[];
+  };
+  values?: string[];
+  colors?: {
+    primary?: string;
+    secondary?: string;
+    accent?: string;
+  };
+}
+
 // API Request/Response types
 export interface ContentGenerationRequest {
   topic: string;
   language?: string;
   tone?: string;
   targetAudience?: string;
-  brandContext?: {
-    name: string;
-    industry: string;
-    tagline?: string;
-    uniqueSellingPoint?: string;
-    brandVoice?: {
-      tone: string;
-      personality?: string[];
-      avoidWords?: string[];
-    };
-    targetAudience?: {
-      ageRange: string;
-      demographics?: string;
-      interests?: string[];
-      painPoints?: string[];
-    };
-    values?: string[];
-  };
+  brandContext?: BrandContext;
 }
 
 export interface ImageGenerationRequest {
@@ -61,6 +69,7 @@ export interface ImageGenerationRequest {
   model?: string;
   productImage?: string; // Base64 encoded image
   presenterImage?: string; // Base64 encoded image
+  brandContext?: BrandContext; // Brand context for image styling
 }
 
 export interface GeneratedImage {

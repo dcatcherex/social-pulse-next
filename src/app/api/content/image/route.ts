@@ -1,17 +1,81 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { ImageGenerationRequest } from '@/features/content-generator/types';
+import type { ImageGenerationRequest, BrandContext } from '@/features/content-generator/types';
 import { generateImage, getAvailableProviders } from '@/lib/ai-providers';
+
+/**
+ * Build brand-aware prompt enhancement from brand context
+ */
+function buildBrandImageContext(brandContext: BrandContext | undefined): string {
+  if (!brandContext) return '';
+
+  const parts: string[] = [];
+
+  // Brand identity
+  parts.push(`Brand: "${brandContext.name}" (${brandContext.industry} industry).`);
+
+  // Brand voice affects visual style
+  if (brandContext.brandVoice) {
+    const tone = brandContext.brandVoice.tone;
+    const personality = brandContext.brandVoice.personality?.slice(0, 3).join(', ');
+    if (tone) {
+      parts.push(`Visual style should feel ${tone}.`);
+    }
+    if (personality) {
+      parts.push(`Brand personality: ${personality}.`);
+    }
+  }
+
+  // Target audience influences imagery
+  if (brandContext.targetAudience) {
+    const { ageRange, demographics } = brandContext.targetAudience;
+    if (ageRange && ageRange !== 'all') {
+      parts.push(`Target audience: ${ageRange} age group.`);
+    }
+    if (demographics) {
+      parts.push(`Demographics: ${demographics}.`);
+    }
+  }
+
+  // Brand colors for visual consistency
+  if (brandContext.colors) {
+    const colorHints: string[] = [];
+    if (brandContext.colors.primary) {
+      colorHints.push(`primary color ${brandContext.colors.primary}`);
+    }
+    if (brandContext.colors.secondary) {
+      colorHints.push(`secondary ${brandContext.colors.secondary}`);
+    }
+    if (brandContext.colors.accent) {
+      colorHints.push(`accent ${brandContext.colors.accent}`);
+    }
+    if (colorHints.length > 0) {
+      parts.push(`Brand colors: ${colorHints.join(', ')}. Incorporate these colors subtly.`);
+    }
+  }
+
+  // Brand values
+  if (brandContext.values && brandContext.values.length > 0) {
+    parts.push(`Brand values: ${brandContext.values.slice(0, 3).join(', ')}.`);
+  }
+
+  return parts.length > 0 ? `\n\n[Brand Context]\n${parts.join('\n')}` : '';
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body: ImageGenerationRequest = await request.json();
-    const { prompt } = body;
+    const { prompt, brandContext } = body;
 
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     }
 
+    // Enhance prompt with brand context
+    const brandEnhancement = buildBrandImageContext(brandContext);
+    const enhancedPrompt = prompt + brandEnhancement;
+
     console.log('[Image API] Generating image with prompt:', prompt);
+    console.log('[Image API] Brand context:', brandContext ? 'Yes' : 'No');
     console.log('[Image API] Options:', {
       model: body.model,
       aspectRatio: body.aspectRatio,
@@ -22,7 +86,7 @@ export async function POST(request: NextRequest) {
 
     // Use the provider system to generate the image
     const result = await generateImage({
-      prompt: body.prompt,
+      prompt: enhancedPrompt,
       aspectRatio: body.aspectRatio,
       cameraAngle: body.cameraAngle,
       imageStyle: body.imageStyle,

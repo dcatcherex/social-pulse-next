@@ -2,7 +2,9 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useBrand } from '@/features/brand-management';
 import { generateImage, getImageProviders } from '../services/content-service';
+import type { BrandContext } from '../types';
 
 // Presets
 export const ASPECT_RATIOS = [
@@ -96,6 +98,7 @@ const ALL_MODELS: AIModel[] = [
 export const AI_MODELS = ALL_MODELS;
 
 export function useImageGeneration() {
+  const { activeProfile } = useBrand();
   const [prompt, setPrompt] = useState('');
   const [aspectRatio, setAspectRatio] = useState('1:1');
   const [cameraAngle, setCameraAngle] = useState('eye-level');
@@ -104,6 +107,21 @@ export function useImageGeneration() {
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [productImage, setProductImage] = useState<string | null>(null);
   const [presenterImage, setPresenterImage] = useState<string | null>(null);
+
+  // Build brand context for image generation
+  const brandContext: BrandContext | undefined = useMemo(() => {
+    if (!activeProfile) return undefined;
+    return {
+      name: activeProfile.name,
+      industry: activeProfile.industry,
+      tagline: activeProfile.tagline,
+      uniqueSellingPoint: activeProfile.uniqueSellingPoint,
+      brandVoice: activeProfile.brandVoice,
+      targetAudience: activeProfile.targetAudience,
+      values: activeProfile.values,
+      colors: activeProfile.brandColors,
+    };
+  }, [activeProfile]);
 
   // Fetch available providers from the API
   const { data: providersData } = useQuery({
@@ -149,6 +167,7 @@ export function useImageGeneration() {
       model: aiModel || undefined,
       productImage: productImage || undefined,
       presenterImage: presenterImage || undefined,
+      brandContext, // Include brand context
     }),
   });
 
