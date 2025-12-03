@@ -59,6 +59,13 @@ meet the team style photography`,
       aspectRatio: '4:5',
       cameraAngle: 'eye-level',
     },
+    imageUpload: {
+      enabled: true,
+      label: 'Upload Team Member Photo',
+      hint: 'Upload their photo. AI will create a professional portrait style.',
+      required: false,
+      type: 'person',
+    },
   },
   {
     id: 'milestone',
@@ -111,6 +118,13 @@ anniversary or achievement style design`,
     suggestedImageStyle: {
       style: 'graphic',
       aspectRatio: '1:1',
+    },
+    imageUpload: {
+      enabled: true,
+      label: 'Upload Celebration Photo',
+      hint: 'Optional: Upload team or store photo for personalized celebration.',
+      required: false,
+      type: 'scene',
     },
   },
 ];

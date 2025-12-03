@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useState, ChangeEvent } from 'react';
-import { ArrowLeft, Sparkles, Image as ImageIcon, RefreshCw } from 'lucide-react';
+import { useCallback, useState, useRef, ChangeEvent } from 'react';
+import { ArrowLeft, Sparkles, Image as ImageIcon, RefreshCw, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,7 +24,7 @@ interface TemplateFormProps {
   template: ContentTemplate;
   onBack: () => void;
   onGenerateText: (prompt: string, tone: string) => void;
-  onGenerateImage: (prompt: string, imageStyle: ContentTemplate['suggestedImageStyle']) => void;
+  onGenerateImage: (prompt: string, imageStyle: ContentTemplate['suggestedImageStyle'], uploadedImage?: string) => void;
   isGeneratingText?: boolean;
   isGeneratingImage?: boolean;
 }
@@ -41,6 +41,10 @@ export function TemplateForm({
   const [formValues, setFormValues] = useState<TemplateFormValues>(() => 
     getDefaultFormValues(template)
   );
+  
+  // Image upload state
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateField = useCallback((fieldId: string, value: string) => {
     setFormValues((prev) => ({ ...prev, [fieldId]: value }));
@@ -80,8 +84,39 @@ export function TemplateForm({
 
   const handleGenerateImage = useCallback(() => {
     const prompt = processPrompt(template.imagePromptTemplate);
-    onGenerateImage(prompt, template.suggestedImageStyle);
-  }, [processPrompt, template, onGenerateImage]);
+    onGenerateImage(prompt, template.suggestedImageStyle, uploadedImage || undefined);
+  }, [processPrompt, template, onGenerateImage, uploadedImage]);
+
+  // Handle image upload
+  const handleImageUpload = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUploadedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }, []);
+
+  const clearUploadedImage = useCallback(() => {
+    setUploadedImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, []);
 
   const formComplete = isFormComplete(template, formValues);
   const Icon = template.icon;
@@ -186,6 +221,55 @@ export function TemplateForm({
           ))}
         </div>
       </div>
+
+      {/* Image Upload Section */}
+      {template.imageUpload?.enabled && (
+        <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-slate-800">{template.imageUpload.label}</h3>
+              <p className="text-sm text-slate-500">{template.imageUpload.hint}</p>
+            </div>
+            {template.imageUpload.required && (
+              <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
+                Required
+              </span>
+            )}
+          </div>
+
+          {uploadedImage ? (
+            <div className="relative">
+              <img
+                src={uploadedImage}
+                alt="Uploaded preview"
+                className="w-full h-48 object-cover rounded-lg border border-slate-200"
+              />
+              <button
+                onClick={clearUploadedImage}
+                className="absolute top-2 right-2 p-1.5 bg-white/90 hover:bg-white rounded-full shadow-sm border border-slate-200 transition-colors"
+              >
+                <X className="w-4 h-4 text-slate-600" />
+              </button>
+              <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                ✓ Image uploaded - will be used as reference for AI generation
+              </p>
+            </div>
+          ) : (
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-indigo-400 hover:bg-slate-50 transition-colors">
+              <Upload className="w-8 h-8 text-slate-400 mb-2" />
+              <span className="text-sm text-slate-500">Click to upload image</span>
+              <span className="text-xs text-slate-400 mt-1">PNG, JPG up to 5MB</span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </label>
+          )}
+        </div>
+      )}
 
       {/* Tips Section */}
       {template.tips && template.tips.length > 0 && (

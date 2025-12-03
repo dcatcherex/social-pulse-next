@@ -231,7 +231,9 @@ export function useImageGeneration() {
     availableModels,
     // Product & Presenter Images
     productImage,
+    setProductImage,
     presenterImage,
+    setPresenterImage,
     handleImageUpload,
     clearProductImage,
     clearPresenterImage,

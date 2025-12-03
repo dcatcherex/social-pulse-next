@@ -1,4 +1,4 @@
-import { Star, MessageCircleQuestion, Heart, Quote } from 'lucide-react';
+import { Star, MessageCircleQuestion, Heart, Quote, Image } from 'lucide-react';
 import type { ContentTemplate } from '../types';
 
 /**
@@ -49,6 +49,13 @@ minimalist clean background, trustworthy aesthetic`,
     suggestedImageStyle: {
       style: 'graphic',
       aspectRatio: '1:1',
+    },
+    imageUpload: {
+      enabled: true,
+      label: 'Upload Customer Photo',
+      hint: 'Optional: Upload customer photo to personalize the testimonial.',
+      required: false,
+      type: 'person',
     },
   },
   {
@@ -139,6 +146,13 @@ celebratory yet sincere aesthetic, professional social media style`,
       style: 'graphic',
       aspectRatio: '1:1',
     },
+    imageUpload: {
+      enabled: true,
+      label: 'Upload Celebration Photo',
+      hint: 'Optional: Upload a team photo or celebration moment.',
+      required: false,
+      type: 'scene',
+    },
   },
   {
     id: 'quote-post',
@@ -170,7 +184,7 @@ celebratory yet sincere aesthetic, professional social media style`,
         type: 'textarea',
         helperText: 'Add your personal connection to this quote',
       },
-    ],
+    ],  
     textPromptTemplate: `Create an inspiring quote post.
 Quote: "{{quote}}"
 {{#author}}- {{author}}{{/author}}
@@ -187,4 +201,81 @@ minimalist composition`,
       aspectRatio: '1:1',
     },
   },
+  {
+    id: 'user-photo-repost',
+    name: 'User Photo Repost',
+    description: 'Share a user photo or image',
+    category: 'engagement',
+    icon: Image,
+    variables: [
+      {
+        id: 'creatorHandle',
+        label: 'Creator Handle',
+        placeholder: 'e.g., @brewwithmaya',
+        required: true,
+        type: 'text',
+      },
+      {
+        id: 'creatorName',
+        label: 'Creator Name (Optional)',
+        placeholder: 'e.g., Maya Lopez',
+        required: false,
+        type: 'text',
+      },
+      {
+        id: 'photoMoment',
+        label: 'Photo Moment or Story',
+        placeholder: 'Describe what the photo captures or celebrates',
+        required: true,
+        type: 'textarea',
+      },
+      {
+        id: 'productFeature',
+        label: 'Product/Experience Featured (Optional)',
+        placeholder: 'e.g., Our ceramic travel mug in terracotta',
+        required: false,
+        type: 'text',
+      },
+      {
+        id: 'brandReaction',
+        label: 'What You Loved About It',
+        placeholder: 'e.g., We love how Maya styled her slow morning setup',
+        required: true,
+        type: 'textarea',
+        helperText: 'Share why this user photo stands out to your brand',
+      },
+      {
+        id: 'cta',
+        label: 'Call to Action (Optional)',
+        placeholder: 'e.g., Tag us to be featured next',
+        required: false,
+        type: 'text',
+      },
+    ],
+    textPromptTemplate: `Write a caption for reposting a community photo.
+Photo credit: {{#creatorName}}{{creatorName}} {{/creatorName}}({{creatorHandle}})
+Story: {{photoMoment}}
+{{#productFeature}}Featured: {{productFeature}}{{/productFeature}}
+What we love: {{brandReaction}}
+{{#cta}}CTA: {{cta}}{{/cta}}
+Keep it grateful, celebratory, and highlight authentic user love. Invite others to share their moments too.`,
+    imagePromptTemplate: `Community spotlight social post layout showcasing a real user photo, 
+lifestyle aesthetic, subtle brand accents, soft natural lighting, 
+modern typography with "Community Spotlight" tag, collage or polaroid frame detail, 
+vertical 4:5 format, polished yet authentic UGC vibe`,
+    suggestedPlatforms: ['instagram', 'facebook', 'tiktok'],
+    suggestedTone: 'Celebratory',
+    suggestedImageStyle: {
+      style: 'lifestyle collage',
+      aspectRatio: '4:5',
+    },
+    imageUpload: {
+      enabled: true,
+      label: 'Upload User Photo',
+      hint: 'Share the community photo you are featuring for the repost.',
+      required: false,
+      type: 'person',
+    },
+  },
+
 ];

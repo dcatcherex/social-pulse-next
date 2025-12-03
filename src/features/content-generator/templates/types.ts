@@ -43,6 +43,22 @@ export interface TemplateImageStyle {
 }
 
 /**
+ * Image upload type for templates
+ */
+export type ImageUploadType = 'product' | 'person' | 'scene' | 'any';
+
+/**
+ * Image upload configuration for templates
+ */
+export interface TemplateImageUpload {
+  enabled: boolean;          // Whether this template supports image upload
+  label: string;             // "Upload your product photo"
+  hint: string;              // "Best results with white background"
+  required?: boolean;        // Is upload required for image generation?
+  type: ImageUploadType;     // What kind of image is expected
+}
+
+/**
  * Content Template Definition
  */
 export interface ContentTemplate {
@@ -63,6 +79,9 @@ export interface ContentTemplate {
   suggestedPlatforms: Platform[];
   suggestedTone: string;
   suggestedImageStyle: TemplateImageStyle;
+  
+  // Image upload configuration
+  imageUpload?: TemplateImageUpload;
   
   // Optional metadata
   exampleOutput?: string;    // Example of what this template produces

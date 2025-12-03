@@ -4,6 +4,8 @@ export type {
   TemplateFieldType,
   TemplateVariable,
   TemplateImageStyle,
+  ImageUploadType,
+  TemplateImageUpload,
   ContentTemplate,
   TemplateCategoryInfo,
   TemplateFormValues,

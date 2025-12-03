@@ -39,6 +39,7 @@ export function TemplatesTab() {
     setAspectRatio,
     setImageStyle,
     setCameraAngle,
+    setProductImage,
     generatedImage,
     isLoading: isGeneratingImage,
     generate: generateImage,
@@ -69,8 +70,19 @@ export function TemplatesTab() {
   }, [setTone, generateText]);
 
   // Handle image generation from template
-  const handleGenerateImage = useCallback((prompt: string, imageStyle: TemplateImageStyle) => {
+  const handleGenerateImage = useCallback((
+    prompt: string, 
+    imageStyle: TemplateImageStyle,
+    uploadedImage?: string
+  ) => {
     setImagePrompt(prompt);
+    
+    // Set uploaded image as product reference
+    if (uploadedImage) {
+      setProductImage(uploadedImage);
+    } else {
+      setProductImage(null);
+    }
     
     // Find matching aspect ratio
     const aspectRatioOption = ASPECT_RATIOS.find(r => r.value === imageStyle.aspectRatio);
@@ -94,7 +106,7 @@ export function TemplatesTab() {
     
     generateImage();
     setViewState('results');
-  }, [setImagePrompt, setAspectRatio, setImageStyle, setCameraAngle, generateImage]);
+  }, [setImagePrompt, setProductImage, setAspectRatio, setImageStyle, setCameraAngle, generateImage]);
 
   // Result actions
   const handleCopy = useCallback((text: string, index: number) => {
